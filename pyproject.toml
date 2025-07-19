@@ -1,0 +1,125 @@
+[project]
+name = "reindeer-hearding"
+version = "0.0.1"
+description = "Code base for analysing the influence of mining concessions on reindeer hearding."
+authors = [{ name = "Michal Gricuk", email = "michal.gricuk@gmail.com" }]
+requires-python = ">=3.11,<3.12"
+readme = "README.md"
+dependencies = [
+    "earthengine-api>=1.5.21",
+    "geemap>=0.35.3",
+    "python-docx>=1.2.0",
+    "docx2pdf>=0.1.8",
+    "cartopy>=0.24.1",
+    "cmocean>=4.0.3",
+    "seaborn>=0.13.2",
+    "osmnx>=2.0.5",
+    "geopandas>=1.1.1",
+    "shapely>=2.1.1",
+]
+
+[project.urls]
+Repository = "https://github.com/MichalGricuk/reindeer-herding.git"
+
+[dependency-groups]
+dev = [
+    "pytest>=6,<7",
+    "pytest-cov>=3.0,<4.0",
+    "pre-commit>=3.4.0,<4",
+]
+docs = [
+    "mkdocs>=1.4.2,<2",
+    "mkdocs-material>=9.2.7,<10",
+    "mkdocstrings[python]>=0.26.1,<0.27",
+    "mkdocs-gen-files>=0.5.0,<0.6",
+    "mkdocs-literate-nav>=0.6.1,<0.7",
+    "mkdocs-section-index>=0.3.9,<0.4",
+]
+
+[tool.uv]
+default-groups = [
+    "dev",
+    "docs",
+]
+
+[tool.uv.sources]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+include = ["src/*"]
+
+[tool.ruff.lint]
+select = ["E", "F", "B", "D", "W", "C90", "N", "A", "RUF", "SIM", "PL"]
+ignore = [
+  "E501",  # Line too long (more than 79 characters).
+  "B905",  # Ignore zip without explicit strict.
+  "C901",  # Function is too complex (complexity is measured by cyclomatic complexity).
+  "D107",  # Missing docstring in a public __init__ method.
+  "RUF001",  # Character strings contains ambiguous unicode character.
+  "PLR0913"  # Too many arguments in function or method (function has too many parameters).
+]
+extend-select = ["I"]
+mccabe.max-complexity = 10
+pydocstyle.convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+
+[tool.ruff.format]
+docstring-code-format = true
+preview = true
+
+[tool.pydoclint]
+style = "google"
+arg-type-hints-in-signature = true
+arg-type-hints-in-docstring = false
+skip-checking-short-docstrings = false
+check-return-types = false
+check-yield-types = false
+
+[tool.interrogate]
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-semiprivate = false
+ignore-private = false
+ignore-property-decorators = false
+ignore-module = false
+ignore-nested-functions = false
+ignore-nested-classes = true
+ignore-setters = false
+fail-under = 100
+exclude = ["docs", "build", "src/tests"]
+ignore-regex = [
+  "^_init_*",
+  "^_to_lower$",
+  "^_to_datetime$",
+  "^get$",
+  "^mock_.*",
+  ".*BaseClass.*",
+]
+# possible values: 0 (minimal output), 1 (-v), 2 (-vv)
+verbose = 2
+quiet = false
+whitelist-regex = []
+color = true
+omit-covered-files = false
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+source = ["reindeer_hearding"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/reindeer_hearding"]

@@ -32,3 +32,35 @@ def get_osm_roads(gdf_geometry: gpd.GeoDataFrame, output_file: Optional[str] = N
         print(f"Road data saved to {output_file}")
     
     return gdf_road
+
+def get_osm_power_grids(gdf_geometry: gpd.GeoDataFrame, output_file: str = None) -> gpd.GeoDataFrame:
+    """
+    Scrapes all power grid data (e.g., power lines, substations) from OpenStreetMap within a given polygon 
+    and saves them as a .gpkg file.
+
+    Args:
+        gdf_geometry: The geometry of the area of interest.
+        output_file: Path to the output .gpkg file.
+
+    Returns:
+        gpd.GeoDataFrame: A GeoDataFrame containing the power grid data.
+    """
+    # Ensure the GeoDataFrame contains a single polygon geometry
+    if gdf_geometry.empty or not gdf_geometry.geometry.iloc[0].is_valid:
+        raise ValueError("The GeoDataFrame must contain a valid polygon geometry.")
+
+    # Extract the polygon geometry
+    polygon = gdf_geometry.geometry.iloc[0]
+
+    # Define the tags for power grid data (e.g., power lines, substations)
+    tags = {"power": True}
+
+    # Download power grid data within the polygon
+    power_network = ox.features_from_polygon(polygon, tags)
+
+    # Save the GeoDataFrame to a GeoPackage file
+    if output_file:
+        power_network.to_file(output_file, driver="GPKG")
+        print(f"Power grid data saved to {output_file}")
+    
+    return power_network
